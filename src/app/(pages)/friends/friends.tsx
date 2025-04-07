@@ -28,7 +28,7 @@ export default function FriendsPage({ session }: { session: Session }) {
                 { ...item.friend, status: item.status }
             ));
             setFriends(mappedData);
-            setRequests(mappedData.filter(friend => friend.status === RELATIONSHIP_STATUS.REQUESTEE));
+            setRequests(mappedData.filter((friend: User) => friend.status === RELATIONSHIP_STATUS.REQUESTEE));
         }
     }
 
