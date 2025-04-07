@@ -12,6 +12,10 @@ button {
     border-radius: 8px;
 }
 
+.lineup-page {
+    padding: 5px 24px;
+}
+
 .day-wrapper {
     display: flex;
     align-items: center;
@@ -32,7 +36,7 @@ button {
 .lineup-wrapper {
     margin: 20px auto;
     width: 100%;
-    max-width: 1200px;
+    // max-width: 1200px;
     overflow-x: scroll;
 
     .lineup {

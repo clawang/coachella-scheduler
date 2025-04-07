@@ -27,8 +27,6 @@ function Lineup({ session }: { session: Session | null }) {
         }
     }
 
-    console.log(acts);
-
     useEffect(() => {
         if (session?.user.id) {
             fetchProfile(session.user.id);
@@ -86,7 +84,7 @@ function Lineup({ session }: { session: Session | null }) {
     }
 
     return (
-        <div>
+        <div className="lineup-page">
             <div className="day-wrapper">
                 <button onClick={() => setDay(418)} className={day === 418 ? 'selected' : ''}>Friday</button>
                 <button onClick={() => setDay(419)} className={day === 419 ? 'selected' : ''}>Saturday</button>
