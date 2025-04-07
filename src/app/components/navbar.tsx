@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { createClientComponentClient, Session } from '@supabase/auth-helpers-nextjs'
 import { Supabase } from '../supabase/client';
 import { User } from '../types';
+import useWindowDimensions from '../utils/useWindowDimensions';
 import "../globals.scss";
 
 export function NavBar() {
@@ -143,27 +144,4 @@ export function NavBar() {
             </div>
         )
     }
-}
-
-function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
-    return {
-        width,
-        height
-    };
-}
-
-export default function useWindowDimensions() {
-    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-    useEffect(() => {
-        function handleResize() {
-            setWindowDimensions(getWindowDimensions());
-        }
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    return windowDimensions;
 }
