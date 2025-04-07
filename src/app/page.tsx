@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import LandingPage from './Landing';
 import Link from 'next/link'
 import Schedule from './schedule';
 
@@ -12,7 +13,11 @@ export default async function Index() {
     data: { session },
   } = await supabase.auth.getSession()
 
-  return (
-    <Schedule session={session} />
-  );
+  if (session) {
+    return (
+      <Schedule session={session} />
+    );
+  } else {
+    return <LandingPage />
+  }
 }
