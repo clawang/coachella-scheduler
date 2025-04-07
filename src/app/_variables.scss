@@ -1,0 +1,27 @@
+$yellow: rgba(244, 214, 163, 0.3);
+$dark-yellow: #f4d6a3;
+$pink: rgba(249, 200, 194, 0.5);
+$body-font: var(--font-camera-plain), sans-serif;
+$accent-font: var(--font-dream-orphans), serif;
+$selection-color: #c9e5d8;
+$body-color: #3a3a3a;
+$accent-color: #097a88;
+$subtitle-color: #727078;
+$background-color: #fffdf4;
+$blue: #83C9D9;
+$primary-button: #FF6E33;
+$general-night: #1E1A31;
+$deep-plum: #582D41;
+$cream: #FFEDD2;
+$error-red: #ff4501;
+
+@font-face {
+	font-family: "transducer-variable";
+	src: url("https://use.typekit.net/af/e88dea/0000000000000000774b97a8/30/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"), url("https://use.typekit.net/af/e88dea/0000000000000000774b97a8/30/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"), url("https://use.typekit.net/af/e88dea/0000000000000000774b97a8/30/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+	font-display: auto;
+	font-style: normal;
+	font-weight: 400;
+	font-stretch: normal;
+}
+
+$header-font: "transducer-variable", sans-serif;

@@ -1,0 +1,219 @@
+@use "./variables";
+
+.scheduleWrapper {
+	width: 100%;
+	max-width: 800px;
+	margin: 20px auto;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.scheduleDay {
+	margin: 20px 0;
+	padding: 20px 0;
+}
+
+.scheduleItemWrapper {
+	background: #f9f1e2;
+	border-radius: 8px;
+	padding: 15px 10px;
+	margin: 10px 0;
+	color: variables.$general-night;
+	box-shadow: 0 4px 20px 0 rgba(0,0,0,.15);
+
+	img {
+		width: 12px;
+		height: 16px;
+		margin-right: 5px;
+	}
+
+	h3 {
+		font-family: variables.$accent-font;
+		margin: 5px 0;
+		font-size: 24px;
+	}
+
+	button {
+		margin: 0 5px;
+		font-family: variables.$body-font;
+		color: variables.$body-color;
+		background: rgb(255, 219, 203);
+		font-weight: 800;
+		cursor: pointer;
+		border-radius: 8px;
+		padding: 10px 15px;
+		min-width: 72px;
+		flex-shrink: 0;
+		border: none;
+		transition: 0.3s;
+
+		&:hover {
+		background: variables.$deep-plum;
+		color: variables.$cream;
+		}
+	}
+
+	[class~="schedule-item-top"] {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+}
+
+.scheduleItemLocation {
+	display: flex;
+	align-items: center;
+	color: variables.$body-color;
+
+	h4 {
+		font-weight: 200;
+	}
+}
+
+.conflictWrapper {
+	//border: 1px solid red;
+	background: variables.$pink;
+	padding: 20px;
+	margin: 10px;
+	position: relative;
+
+	[class~="conflictActsWrapper"] {
+		display: flex;
+		align-items: center;
+
+		[class~="actWrapper"] {
+			width: 200px;
+
+			&:first-of-type {
+				margin-left: 0;
+			}
+		}
+	}
+
+	button {
+		position: absolute;
+		right: 20px;
+		bottom: 30px;
+	}
+}
+
+.gap-wrapper {
+	//border: 1px solid yellow;
+	background: variables.$yellow;
+	padding: 20px;
+	margin: 10px;
+	position: relative;
+
+	[class~="gapArtistsWrapper"] {
+		display: flex;
+		flex-wrap: wrap;
+		height: 110px;
+		overflow: hidden;
+		margin-bottom: 10px;
+
+		&[class~="open"] {
+			height: auto !important;
+		}
+	}
+
+	a {
+		cursor: pointer;
+		text-decoration: underline;
+	}
+
+	[class~="actWrapper"] {
+		width: 200px;
+	}
+
+	:global(#close) {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		cursor: pointer;
+	}
+
+	&[class~="hidden"] {
+		display: none;
+	}
+}
+
+.actWrapper {
+	border: 1px solid black;
+	padding: 10px;
+	margin: 10px 5px;
+	position: relative;
+
+	[class~="actLocation"] {
+		display: flex;
+		align-items: center;
+		color: variables.$body-color;
+
+		h4 {
+			font-family: 'Mont Bold';
+			font-weight: 200;
+		}
+
+		img {
+			width: 12px;
+			height: 16px;
+			margin-right: 5px;
+		}
+	}
+
+	[class~="action"] {
+		position: absolute;
+		right: 10px;
+		bottom: 10px;
+		text-decoration: underline;
+		font-size: 12px;
+	}
+}
+
+.error {
+	color: variables.$error-red;
+	margin: 10px 0 0;
+	font-size: 14px;
+}
+
+.friendListWrapper {
+	border-top: 1px solid #e6d8c6;
+	margin-top: 10px;
+	padding-top: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+	.scheduleDay {
+		margin: 0;
+	}
+	.scheduleItemWrapper {
+		padding: 10px 10px 7px;
+
+		h3 {
+			font-size: 18px;
+		}
+
+		[class~="schedule-item-time"] {
+			font-size: 12px;
+		}
+	}
+
+	.scheduleItemLocation {
+		img {
+			width: 9px;
+			height: 12px;
+		}
+		h4 {
+			font-size: 14px;
+		}
+	}
+
+	.error {
+		font-size: 12px;
+		margin-top: 5px;
+	}
+
+	.friendListWrapper {
+		margin-top: 5px;
+		padding-top: 0px;
+	}
+}

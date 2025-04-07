@@ -1,0 +1,93 @@
+@use "../../variables";
+
+button {
+    padding: 12.5px 18px;
+    margin: 0 5px;
+    font-family: variables.$body-font;
+    color: variables.$body-color;
+    border: 2px solid variables.$body-color;
+    background: transparent;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.day-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 50px 0 50px;
+
+    button {
+        font-family: variables.$header-font;
+        text-transform: uppercase;
+    }
+
+    button.selected {
+        background: variables.$body-color;
+        color: white;
+    }
+}
+
+.lineup-wrapper {
+    margin: 20px auto;
+    width: 100%;
+    max-width: 1200px;
+    overflow-x: scroll;
+
+    .lineup {
+        display: flex;
+    }
+
+    .stage-wrapper {
+        margin: 0 10px;
+        width: 230px;
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        h2 {
+            font-family: 'transducer-variable';
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+    }
+
+    .artist-wrapper {
+        background: variables.$blue;
+        border-radius: 8px;
+        padding: 15px 10px;
+        margin: 10px 0;
+        cursor: pointer;
+        color: variables.$general-night;
+
+        .artist-time {
+            font-size: 12px;
+            margin: 5px 0;
+        }
+
+        h3 {
+            font-family: variables.$accent-font;
+        }
+
+        button {
+            padding: 7px 10px;
+            min-width: 72px;
+            flex-shrink: 0;
+        }
+
+        &.selected {
+            background: variables.$selection-color;
+
+            button {
+                background: variables.$body-color;
+                color: variables.$cream;
+            }
+        }
+
+        .act-info {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+    }
+}

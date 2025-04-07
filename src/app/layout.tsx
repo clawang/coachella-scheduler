@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import localFont from 'next/font/local'
+import {NavBar} from './components/navbar';
+import "./globals.scss";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const cameraPlain = localFont({
+  src: './fonts/ABCCameraPlain-Regular.otf',
+  variable: "--font-camera-plain"
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const dreamOrphans = localFont({
+  src: './fonts/DreamOrphansBd.woff2',
+  variable: "--font-dream-orphans"
 });
 
 export const metadata: Metadata = {
@@ -24,8 +24,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body className={`${cameraPlain.variable} ${dreamOrphans.variable}`}>
+        <div className="App">
+          {/* <div className="background">
+            <img src="/homepage-gradient-hero-left.png" id="bg1" alt="background" />
+            <img src="/homepage-gradient-hero-right.png" id="bg2" alt="background" />
+          </div> */}
+          <div className="content">
+            <NavBar />
+            {children}
+          </div>
+        </div>
+
       </body>
     </html>
   );

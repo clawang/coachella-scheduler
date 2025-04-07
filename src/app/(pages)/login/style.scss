@@ -1,0 +1,52 @@
+@import "../../variables";
+
+.link {
+    a {
+        cursor: pointer;
+        color: $blue;
+    }
+}
+
+.loginWrapper {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 30px;
+
+    h2 {
+        font-family: $body-font;
+    }
+}
+
+.loginForm {
+    margin: 24px 0;
+
+    input, button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    button {
+        margin-top: 10px;
+    }
+}
+
+.inputWrapper {
+    margin: 0 0 10px 0;
+
+    input {
+        padding: 8px 0;
+    }
+}
+
+.error {
+    color: $error-red;
+    font-size: 11px;
+}
+
+.error-banner {
+    color: $error-red;
+    border: 2px solid $error-red;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+}
