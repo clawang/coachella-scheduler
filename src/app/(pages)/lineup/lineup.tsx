@@ -57,7 +57,7 @@ function Lineup({ session }: { session: Session | null }) {
             const friendData = await supabase.fetchFriendsActs();
             const friendActs: { [key: number]: User[] } = {};
             if ("data" in friendData) {
-                friendData.data!.forEach(friendAct => {
+                friendData.data!.forEach((friendAct: {act: any, friend: any}) => {
                     const id = friendAct.act.id;
                     if (!(id in friendActs)) {
                         friendActs[id] = [];
@@ -172,7 +172,9 @@ function Artist({ actData, mySchedule, editSchedule, supabase, userId }: {
             className={
                 "artist-wrapper" + (mySchedule.hasOwnProperty(actData.id) ? ' selected' : '')
             }
-            style={{ '--friend-cluster-border-color': mySchedule.hasOwnProperty(actData.id) ? '#c9e5d8' : '#83C9D9' }}
+            style={{ 
+                '--friend-cluster-border-color': mySchedule.hasOwnProperty(actData.id) ? '#c9e5d8' : '#83C9D9' } as React.CSSProperties
+            }
         >
             <div className="act-info">
                 <div className="artist-info">

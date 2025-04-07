@@ -7,8 +7,6 @@ import { Supabase } from '../supabase/client';
 import { User } from '../types';
 import "../globals.scss";
 
-const page = 0;
-
 export function NavBar() {
     const supabase = new Supabase(createClientComponentClient());
     const [userData, setUserData] = useState<User | null>(null);

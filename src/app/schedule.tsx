@@ -1,11 +1,11 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Session } from '@supabase/supabase-js'
 import styles from './page.module.scss'
 import { Act, User } from "./types";
 import { toTimeString } from './utils/timeFunctions';
-import { convertSupabase, findConflicts, splitActs, findGaps, findArtistsWithinTime, timeSortFunction } from './utils/parseData';
+import { convertSupabase, findConflicts, timeSortFunction } from './utils/parseData';
 import { Supabase } from './supabase/client';
 import ActFriendList from './components/friend-cluster';
 
@@ -44,7 +44,7 @@ export default function Schedule({ session }: { session: Session | null }) {
             const friendData = await supabase.fetchFriendsActs();
             const friendActs: { [key: number]: User[] } = {};
             if ("data" in friendData) {
-                friendData.data!.forEach(friendAct => {
+                friendData.data!.forEach((friendAct: {act: any, friend: any}) => {
                     const id = friendAct.act.id;
                     if (!(id in friendActs)) {
                         friendActs[id] = [];
@@ -214,7 +214,7 @@ function ScheduleItem({ actData, supabase, userId, removeAct }: {
 
     return (
         <div className={styles.scheduleItemWrapper}
-            style={{ '--friend-cluster-border-color': '#f9f1e2' }}
+            style={{ '--friend-cluster-border-color': '#f9f1e2' } as React.CSSProperties}
         >
             <div className="schedule-item-top">
                 <div className="schedule-item-info">
@@ -242,21 +242,21 @@ function ScheduleItem({ actData, supabase, userId, removeAct }: {
     );
 }
 
-function ActContainer({ data, isAdded }: { data: Act, isAdded: boolean }) {
+// function ActContainer({ data, isAdded }: { data: Act, isAdded: boolean }) {
 
-    const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
-        // props.editSchedule(data.id);
-    }
+//     const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
+//         // props.editSchedule(data.id);
+//     }
 
-    return (
-        <div className={styles.actWrapper} onClick={handleClick} style={{ cursor: 'pointer' }}>
-            <p>{data.startTime.toTimeString()} - {data.endTime.toTimeString()}</p>
-            <h3>{data.name}</h3>
-            <div className={styles.actLocation}>
-                <img src="./pin.png" />
-                <h4>{data.stage}</h4>
-            </div>
-            <a className={styles.action}>{isAdded ? 'Remove' : 'Add'}</a>
-        </div>
-    );
-}
+//     return (
+//         <div className={styles.actWrapper} onClick={handleClick} style={{ cursor: 'pointer' }}>
+//             <p>{data.startTime.toTimeString()} - {data.endTime.toTimeString()}</p>
+//             <h3>{data.name}</h3>
+//             <div className={styles.actLocation}>
+//                 <img src="./pin.png" />
+//                 <h4>{data.stage}</h4>
+//             </div>
+//             <a className={styles.action}>{isAdded ? 'Remove' : 'Add'}</a>
+//         </div>
+//     );
+// }

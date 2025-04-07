@@ -1,6 +1,5 @@
 import { createClientComponentClient, Session, SupabaseClient, User as SupabaseUser } from '@supabase/auth-helpers-nextjs';
 import { Act, User, RELATIONSHIP_STATUS } from '../types';
-import { dateToSlug } from '../utils';
 import { AuthChangeEvent } from '@supabase/supabase-js';
 
 export class Supabase {
@@ -58,7 +57,7 @@ export class Supabase {
         await this.client.auth.signOut();
     }
 
-    async setUsername(username: string): Promise<{ data, error }> {
+    async setUsername(username: string): Promise<{ data: any, error: any }> {
         const session = await this.getSession();
         const { data, error } = await this.client.from('users').upsert({
             user_id: session!.user?.id,
@@ -107,7 +106,7 @@ export class Supabase {
         });
     }
 
-    async joinUserAct(user_id: string, act_id: number): Promise<{ data, error }> {
+    async joinUserAct(user_id: string, act_id: number): Promise<{ data: any, error: any }> {
         const { data, error } = await this.client.from('acts_users')
             .upsert({
                 user_id,
@@ -118,7 +117,7 @@ export class Supabase {
         return { data, error };
     }
 
-    async unjoinUserAct(user_id: string, act_id: number): Promise<{ data, error }> {
+    async unjoinUserAct(user_id: string, act_id: number): Promise<{ data: any, error: any }> {
         const { data, error } = await this.client.from('acts_users')
             .delete()
             .match({ user_id, act_id });
@@ -126,7 +125,7 @@ export class Supabase {
         return { data, error };
     }
 
-    async searchUsersByUsername(query: string): Promise<{ data, error }> {
+    async searchUsersByUsername(query: string): Promise<{ data: any, error: any }> {
         const { data, error } = await this.client
             .from('users')
             .select(`
@@ -139,7 +138,7 @@ export class Supabase {
         return { data, error };
     }
 
-    async fetchRelationships(user_id: string): Promise<{ data, error }> {
+    async fetchRelationships(user_id: string): Promise<{ data: any, error: any }> {
         const { data, error } = await this.client
             .from('user_relationships')
             .select(`
@@ -151,7 +150,7 @@ export class Supabase {
         return { data, error };
     }
 
-    async searchEvent(query: string): Promise<{ data, error }> {
+    async searchEvent(query: string): Promise<{ data: any, error: any }> {
         const { data, error } = await this.client
             .from('events')
             .select(`
@@ -165,7 +164,7 @@ export class Supabase {
         return { data, error };
     }
 
-    async getUserData(id: string): Promise<{ data, error }> {
+    async getUserData(id: string): Promise<{ data: any, error: any }> {
         let { data, error, status } = await this.client
             .from('users')
             .select(`username, email, profilePic`)
@@ -248,7 +247,7 @@ export class Supabase {
         return { data, error };
     }
 
-    async fetchFriends(user_id: string): Promise<{ data, error }> {
+    async fetchFriends(user_id: string): Promise<{ data: any, error: any }> {
         const { data, error } = await this.client
             .from('user_relationships')
             .select(`
@@ -265,7 +264,7 @@ export class Supabase {
         if (session?.user.id) {
             const friendsObj = await this.fetchFriends(session?.user.id);
             if (friendsObj.data) {
-                const friendIds = friendsObj.data.map(friend => friend.friend.id);
+                const friendIds = friendsObj.data.map((friend: {status: number, friend: User}) => friend.friend.id);
                 const { data, error } = await this.client
                     .from('acts_users')
                     .select(`

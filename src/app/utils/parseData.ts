@@ -29,8 +29,8 @@ export function convertSupabase(data: Array<{[key: string]: any}>): Act[] {
     });
 }
 
-const extractProp = (prop: string, arr: Array) => {
-    let temp = [];
+const extractProp = (prop: string, arr: Array<any>) => {
+    let temp: any[] = [];
     for (let i = 0; i < arr.length; i++) {
         let c = arr[i][prop];
         if (!temp.includes(c) && c !== "") {
@@ -47,12 +47,6 @@ const strToDate = (str: string): Date => {
 
 const timeSortFunction = (a: Act, b: Act) => {
     return a.startTime.valueOf() - b.startTime.valueOf();
-}
-
-const idsToSchedule = (schedule, data) => {
-    let tempSched = Object.getOwnPropertyNames(schedule).map(item => data[item]);
-    tempSched.sort(timeSortFunction);
-    return tempSched;
 }
 
 const findConflicts = (schedule: Act[]) => {
@@ -75,53 +69,50 @@ const findConflicts = (schedule: Act[]) => {
     return conflicts;
 }
 
-const splitActs = (a, b) => {
-    let startTime = strToDate(a.startTime);
-    let endTime = strToDate(b.endTime);
-    let interval = (endTime - startTime) / 2;
-    let newEnd = startTime + Number(interval);
-}
+// const splitActs = (a, b) => {
+//     let startTime = strToDate(a.startTime);
+//     let endTime = strToDate(b.endTime);
+//     let interval = (endTime - startTime) / 2;
+//     let newEnd = startTime + Number(interval);
+// }
 
-const findGaps = (schedule) => {
-    let endTime = strToDate('12:00 PM');
-    let endTimeString = '12:00 PM';
-    let gaps = {};
-    for (let i = 0; i < schedule.length; i++) {
-        const item = schedule[i];
-        const gap = (strToDate(item.startTime) - endTime) / 60000;
-        if (gap >= 60) {
-            const gap = [endTimeString, item.startTime];
-            gaps[i] = gap;
-        }
-        endTime = strToDate(item.endTime);
-        endTimeString = item.endTime;
-    }
-    return gaps;
-}
+// const findGaps = (schedule) => {
+//     let endTime = strToDate('12:00 PM');
+//     let endTimeString = '12:00 PM';
+//     let gaps = {};
+//     for (let i = 0; i < schedule.length; i++) {
+//         const item = schedule[i];
+//         const gap = (strToDate(item.startTime) - endTime) / 60000;
+//         if (gap >= 60) {
+//             const gap = [endTimeString, item.startTime];
+//             gaps[i] = gap;
+//         }
+//         endTime = strToDate(item.endTime);
+//         endTimeString = item.endTime;
+//     }
+//     return gaps;
+// }
 
-const findArtistsWithinTime = (startTime, endTime, data) => {
-    const start = strToDate(startTime);
-    const end = strToDate(endTime);
-    let result = [];
-    for (let i = 0; i < data.length; i++) {
-        const item = data[i];
-        const tempStart = strToDate(data[i].startTime);
-        if (tempStart >= start && tempStart < end) {
-            result.push(data[i]);
-        }
-    }
-    return result;
-}
-
-const orderLineup = () => { };
+// const findArtistsWithinTime = (startTime, endTime, data) => {
+//     const start = strToDate(startTime);
+//     const end = strToDate(endTime);
+//     let result = [];
+//     for (let i = 0; i < data.length; i++) {
+//         const item = data[i];
+//         const tempStart = strToDate(data[i].startTime);
+//         if (tempStart >= start && tempStart < end) {
+//             result.push(data[i]);
+//         }
+//     }
+//     return result;
+// }
 
 export {
     parseData,
     extractProp,
     timeSortFunction,
-    idsToSchedule,
     findConflicts,
-    splitActs,
-    findGaps,
-    findArtistsWithinTime
+    // splitActs,
+    // findGaps,
+    // findArtistsWithinTime
 };
