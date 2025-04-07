@@ -34,11 +34,11 @@ export function NavBar() {
         setOpen(false);
     }
 
-    const signOut = () => {
-        supabase.signOut();
+    const signOut = async () => {
+        await supabase.signOut();
         setUserData(null);
-        router.refresh();
-        router.push("/login");
+        setOpen(false);
+        router.push("/");
     }
 
     if (width > 800) {

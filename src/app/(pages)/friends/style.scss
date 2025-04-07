@@ -29,7 +29,7 @@
 
 .friend-wrapper {
     display: flex;
-    padding: 15px 0;
+    padding: 7px 0;
     align-items: center;
     justify-content: space-between;
 
@@ -53,6 +53,10 @@
         background: variables.$blue;
         margin-right: 15px;
     }
+
+    .button a {
+        padding: 10px 15px;
+    }
 }
 
 .friend-requests {
@@ -69,5 +73,13 @@
 
     h2 {
         margin-bottom: 10px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .friends-container {
+        h2 {
+            margin-bottom: 5px;
+        }
     }
 }
