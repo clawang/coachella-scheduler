@@ -54,9 +54,15 @@ export default function ActFriendList({ friends }: { friends: User[] }) {
         <div className="act-friends-wrapper">
             <FriendCluster friends={friends} />
             <p className="act-friend-text">{friends.length > 1 ?
-                `@${friends[0].username} and ${friends.length - 1} other friends are going`
+                <>
+                    <span className="username">{`@${friends[0].username}`}</span>
+                    {` and ${friends.length - 1} other friends are going`}
+                </>
                 :
-                `@${friends[0].username} is going`
+                <>
+                    <span className="username">{`@${friends[0].username}`}</span>
+                    {` is going`}
+                </>
             }</p>
         </div>
     )

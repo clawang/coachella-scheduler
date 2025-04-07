@@ -1,8 +1,8 @@
 export function convertTimetoDate(date: number, time: string): Date {
     const dates: { [key: number]: string } = {
-        418: "2025-04-18",
-        419: "2025-04-19",
-        420: "2025-04-20"
+        418: "2025/04/18",
+        419: "2025/04/19",
+        420: "2025/04/20"
     };
 
     if (!dates[date]) console.log("unrecognized date");
