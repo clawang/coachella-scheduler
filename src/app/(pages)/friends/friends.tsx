@@ -140,7 +140,7 @@ function Friend({ friendList, data, supabase }: {
         e.preventDefault();
         if (status === RELATIONSHIP_STATUS.NO_RELATION) {
             supabase.sendFriendRequest(data.id);
-            setStatus(2);
+            setStatus(1);
         } else if (status === RELATIONSHIP_STATUS.REQUESTEE) {
             supabase.acceptRequest(data.id);
             setStatus(3);
