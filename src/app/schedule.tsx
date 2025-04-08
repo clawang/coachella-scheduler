@@ -27,29 +27,28 @@ const dayMap: { [key: number]: any } = {
 export default function Schedule({ session }: { session: Session | null }) {
     const supabase = new Supabase(createClientComponentClient());
     const [acts, setActs] = useState<Act[] | null>(null);
-    const [userId, setId] = useState<string>('');
+    const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         if (session?.user.id && !acts) {
             fetchProfile(session.user.id);
-            setId(session.user.id);
         }
     }, []);
 
     const fetchProfile = async (user_id: string) => {
         const { data, error } = await supabase.fetchProfile(user_id);
         if (data?.[0].acts) {
-            let convertedActs = convertSupabase(data[0].acts);
+            let convertedActs = convertSupabase(data[0].acts, data[0].acts_users);
             convertedActs.sort(timeSortFunction);
-            const friendData = await supabase.fetchFriendsActs();
+            const friendData = await supabase.fetchFriendsActsForSchedule(convertedActs);
             const friendActs: { [key: number]: User[] } = {};
             if ("data" in friendData) {
-                friendData.data!.forEach((friendAct: {act: any, friend: any}) => {
+                friendData.data!.forEach((friendAct: { act: any, friend: any, note?: string }) => {
                     const id = friendAct.act.id;
                     if (!(id in friendActs)) {
                         friendActs[id] = [];
                     }
-                    friendActs[id].push(friendAct.friend);
+                    friendActs[id].push({ ...friendAct.friend, note: friendAct.note });
                 });
             }
             setActs(convertedActs.map((act: Act) => {
@@ -59,6 +58,13 @@ export default function Schedule({ session }: { session: Session | null }) {
                     return act;
                 }
             }));
+        }
+        if (data?.[0]) {
+            setUser({
+                id: data[0].id,
+                username: data[0].username,
+                profilePic: data[0].profilePic
+            });
         }
     }
 
@@ -80,7 +86,7 @@ export default function Schedule({ session }: { session: Session | null }) {
                             date={day}
                             data={acts}
                             supabase={supabase}
-                            userId={userId}
+                            user={user!}
                             removeAct={removeAct}
                         />
                     ))}
@@ -90,11 +96,11 @@ export default function Schedule({ session }: { session: Session | null }) {
     );
 }
 
-function Day({ data, date, supabase, userId, removeAct }: {
+function Day({ data, date, supabase, user, removeAct }: {
     data: Array<Act>;
     date: number,
     supabase: Supabase,
-    userId: string,
+    user: User,
     removeAct: (act_id: number) => void,
 }) {
 
@@ -122,7 +128,7 @@ function Day({ data, date, supabase, userId, removeAct }: {
                         <ScheduleItem
                             actData={act}
                             supabase={supabase}
-                            userId={userId}
+                            user={user}
                             removeAct={removeAct}
                         />
                     ))
@@ -133,83 +139,34 @@ function Day({ data, date, supabase, userId, removeAct }: {
     );
 }
 
-// function Conflict(props) {
-
-//     const split = () => {
-//         const firstActId = props.conflicts[props.index][0].id;
-//         const secondActId = props.conflicts[props.index][1].id;
-//         let tempSched = [...props.schedule];
-//         let tempConflicts = { ...props.conflicts };
-//         delete tempConflicts[props.index];
-//         props.setConflicts(tempConflicts);
-//         const conflictsArray = Object.values(tempConflicts);
-//         if (conflictsArray.findIndex(c => c[0].id === firstActId || c[1].id === firstActId) < 0) {
-//             const firstAct = tempSched.find(act => act.id === firstActId);
-//             firstAct.override = true;
-//         }
-//         if (conflictsArray.findIndex(c => c[0].id === secondActId || c[1].id === secondActId) < 0) {
-//             const secondAct = tempSched.find(act => act.id === secondActId);
-//             secondAct.override = true;
-//         }
-//         props.setSchedule(tempSched);
-//     }
-
-//     return (
-//         <div className={styles.conflictWrapper}>
-//             <h3>These two acts conflict:</h3>
-//             <div className={styles.conflictActsWrapper}>
-//                 <ActContainer data={props.conflicts[props.index][0]} isAdded={true} />
-//                 <ActContainer data={props.conflicts[props.index][1]} isAdded={true} />
-//             </div>
-//             <button onClick={split}>See both</button>
-//         </div>
-//     );
-// }
-
-// function Gap({ data }: { data: Array<Act> }) {
-
-//     const [artists, setArtists] = useState([]);
-//     const [open, setOpen] = useState(false);
-//     const [hidden, setHidden] = useState(false);
-
-//     useEffect(() => {
-//         let dayActs = props.allActs.filter(act => act.date === dayMap[props.day].date);
-//         let tempArtists = findArtistsWithinTime(data[0], data[1], dayActs);
-//         setArtists(tempArtists);
-//     }, [setArtists]);
-
-//     return (
-//         <div className={"gap-wrapper" + (hidden ? ' hidden' : '')}>
-//             <p onClick={() => setHidden(true)} id="close">X</p>
-//             <h3>There's a gap in your schedule.</h3>
-//             {artists.length > 0 ?
-//                 <div>
-//                     <p>Here are some artists playing within this time.</p>
-//                     <div className={"gap-artists-wrapper" + (open ? ' open' : '')}>
-//                         {artists.map((act: Act) => <ActContainer key={act.id} data={act} isAdded={false} />)}
-//                     </div>
-//                     <a onClick={() => setOpen(!open)}>{open ? 'Collapse' : 'See All →'}</a>
-//                 </div>
-//                 :
-//                 <p>Try exploring the festival grounds or getting something to eat!</p>
-//             }
-//         </div>
-//     );
-// }
-
-function ScheduleItem({ actData, supabase, userId, removeAct }: {
+function ScheduleItem({ actData, supabase, user, removeAct }: {
     actData: Act,
     supabase: Supabase,
-    userId: string,
+    user: User,
     removeAct: (act_id: number) => void,
 }) {
-    const handleClick = async () => {
-        if (!userId) return;
-        let { data, error } = await supabase.unjoinUserAct(userId, actData.id);
+    const [note, setNote] = useState(actData.note ?? '');
+    const [notesOpen, setNotesOpen] = useState(false);
+    const [noteInputOpen, setInputOpen] = useState(false);
+    const [noteInput, setNoteInput] = useState(actData.note ?? '');
+    const [friendNotes, setFriendNotes] = useState(actData.friends?.filter(friend => friend.note));
+
+    const handleRemoveClick = async () => {
+        if (!user.id) return;
+        let { data, error } = await supabase.unjoinUserAct(user.id, actData.id);
         if (!error) {
             removeAct(actData.id);
         }
         console.log(error);
+    }
+
+    const editNote = async () => {
+        if (!user.id) return;
+        let { data, error } = await supabase.editNote(user.id, actData.id, noteInput);
+        if (!error) {
+            setInputOpen(false);
+            setNote(noteInput);
+        }
     }
 
     return (
@@ -225,38 +182,67 @@ function ScheduleItem({ actData, supabase, userId, removeAct }: {
                         <h4>{actData.stage}</h4>
                     </div>
                 </div>
-                <button onClick={handleClick}>
-                    Remove
-                </button>
+                <div className="button-wrapper">
+                    <button onClick={() => setInputOpen(!noteInputOpen)}>
+                        {note ? "Edit Note" : "+ Note"}
+                    </button>
+                    <button onClick={handleRemoveClick}>
+                        X Remove
+                    </button>
+                </div>
             </div>
             {
                 actData.conflict && <p className={styles.error}>This act conflicts with another you want to see.</p>
             }
-            {
-                actData.friends &&
-                <div className={styles.friendListWrapper}>
-                    <ActFriendList friends={actData.friends} />
+            {(actData.friends || note || noteInputOpen) &&
+                <div className={styles.scheduleItemFooter}>
+                    {
+                        (actData.friends || note) &&
+                        <div className={styles.friendListWrapper}>
+                            {actData.friends &&
+                                <ActFriendList friends={actData.friends} />
+                            }
+                            {((friendNotes && friendNotes.length > 0) || note) &&
+                                <div className="open-notes" onClick={() => setNotesOpen(!notesOpen)}>
+                                    {notesOpen ? "Hide notes" : "Show notes"}
+                                    <img src={notesOpen ? "/carrot.png" : "/down-carrot.png"} />
+                                </div>
+                            }
+                        </div>
+                    }
+                    {
+                        ((friendNotes && friendNotes.length > 0) || note) && notesOpen &&
+                        <div className="friend-notes-wrapper">
+                            {friendNotes && friendNotes.length > 0 &&
+                                friendNotes.map(note => (
+                                    <div className="friend-note-wrapper">
+                                        <p><span className="username">{`@${note.username}`}</span>{` ${note.note}`}</p>
+                                    </div>
+                                ))}
+                            {
+                                note && !noteInputOpen &&
+                                <div className="friend-note-wrapper">
+                                    <p><span className="username">{`@${user.username}`}</span>{` ${note}`}</p>
+                                </div>
+                            }
+                        </div>
+                    }
+                    {
+                        noteInputOpen &&
+                        <div className="note-wrapper">
+                            <div className="profile-pic">
+                                {
+                                    user.profilePic && <img src={user.profilePic} />
+                                }
+                            </div>
+                            <div className="note-input">
+                                <input type="text" value={noteInput} onChange={e => setNoteInput(e.target.value)} />
+                                <div className="send-note" onClick={editNote}>↑</div>
+                            </div>
+                        </div>
+                    }
                 </div>
             }
         </div>
     );
 }
-
-// function ActContainer({ data, isAdded }: { data: Act, isAdded: boolean }) {
-
-//     const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
-//         // props.editSchedule(data.id);
-//     }
-
-//     return (
-//         <div className={styles.actWrapper} onClick={handleClick} style={{ cursor: 'pointer' }}>
-//             <p>{data.startTime.toTimeString()} - {data.endTime.toTimeString()}</p>
-//             <h3>{data.name}</h3>
-//             <div className={styles.actLocation}>
-//                 <img src="./pin.png" />
-//                 <h4>{data.stage}</h4>
-//             </div>
-//             <a className={styles.action}>{isAdded ? 'Remove' : 'Add'}</a>
-//         </div>
-//     );
-// }

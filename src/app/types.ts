@@ -7,14 +7,16 @@ export interface Act {
     id: number,
     conflict?: boolean,
     friends?: User[],
+    note?: string,
 }
 
 export interface User {
     id: string,
-    username: string,
-    email: string,
-    profilePic: string,
+    username?: string,
+    email?: string,
+    profilePic?: string,
     status?: number,
+    note?: string,
 }
 
 export interface Schedule {

@@ -19,13 +19,9 @@ export function NavBar() {
 
     useEffect(() => {
         supabase.onAuthStateChange((event, session) => {
-            if (session) {
-                supabase.getUserFromSession(session).then((data => {
-                    setUserData(data);
-                }));
-            } else {
-                setUserData(null);
-            }
+            supabase.getCurrentUserData().then((data => {
+                setUserData(data);
+            }));
         });
     }, [setUserData]);
 

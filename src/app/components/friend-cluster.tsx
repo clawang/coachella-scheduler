@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { User } from '../types';
+import useWindowDimensions from '../utils/useWindowDimensions';
 import './style.scss';
 
 function FriendCluster({ friends }: { friends: User[] }) {
     const [open, setOpen] = useState(false);
+    const { height, width } = useWindowDimensions();
 
     const handleMouseEnter = () => {
         setOpen(true);
@@ -18,14 +20,14 @@ function FriendCluster({ friends }: { friends: User[] }) {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             style={{
-                width: `${(Math.min(friends.length, 3) - 1) * 8 + 25}px`
+                width: `${(Math.min(friends.length, 3) - 1) * (width < 600 ? 4 : 8) + (width < 600 ? 20 : 25)}px`
             }}>
             {
                 friends.slice(0, 3).map((friend, index) => (
                     <div
                         className="friend-circle"
                         style={{
-                            left: `${8 * index}px`,
+                            left: `${(width < 600 ? 4 : 8) * index}px`,
                             zIndex: `${4 - index}`
                         }}
                     >

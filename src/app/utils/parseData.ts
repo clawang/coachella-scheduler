@@ -16,16 +16,23 @@ const parseData = (str: string) => {
     return output;
 };
 
-export function convertSupabase(data: Array<{[key: string]: any}>): Act[] {
+export function convertSupabase(data: Array<{ [key: string]: any }>, notes?: Array<{ [key: string]: any }>): Act[] {
     return data.map(act => {
-        return {
+        const obj = {
             name: act.name,
             date: dayMap[act.date],
             id: act.id,
             stage: stages[act.stage],
             startTime: convertTimetoDate(act.date, act.startTime),
-            endTime: convertTimetoDate(act.date, act.endTime)
+            endTime: convertTimetoDate(act.date, act.endTime),
         } as Act;
+        if (notes) {
+            const act_user_entry = notes.find(act_user => act_user.act_id === act.id);
+            if (act_user_entry) {
+                obj.note = act_user_entry.note;
+            }
+        }
+        return obj;
     });
 }
 
@@ -51,7 +58,7 @@ const timeSortFunction = (a: Act, b: Act) => {
 
 const findConflicts = (schedule: Act[]) => {
     let endTime = strToDate('12:00 PM');
-    let conflicts: {[key: number]: any} = {};
+    let conflicts: { [key: number]: any } = {};
     for (let i = 0; i < schedule.length; i++) {
         const item = schedule[i];
         if (item.startTime < endTime) {

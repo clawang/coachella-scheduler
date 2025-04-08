@@ -2,7 +2,6 @@
 
 button {
     padding: 12.5px 18px;
-    margin: 0 5px;
     font-family: variables.$body-font;
     color: variables.$body-color;
     border: 2px solid variables.$body-color;
@@ -25,6 +24,7 @@ button {
     button {
         font-family: variables.$header-font;
         text-transform: uppercase;
+        margin: 0 5px;
     }
 
     button.selected {
@@ -79,6 +79,11 @@ button {
             flex-shrink: 0;
         }
 
+        .going-button-dropdown-item:hover {
+            background: variables.$body-color;
+            color: variables.$cream;
+        }
+
         &.selected {
             background: variables.$selection-color;
 
@@ -92,6 +97,11 @@ button {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
+        }
+
+        input {
+            font-size: 12px;
+            padding: 5px;
         }
     }
 }

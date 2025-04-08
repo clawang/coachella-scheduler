@@ -116,3 +116,36 @@
     font-weight: 600;
     // color: variables.$deep-plum;
 }
+
+.going-button {
+    position: relative;
+}
+
+.going-button-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: variables.$cream;
+    width: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+
+    .going-button-dropdown-item {
+        padding: 8px;
+        font-size: 12px;
+        text-align: right;
+        transition: 0.3s;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .friend-cloud {
+        height: 20px;
+        margin-right: 5px;
+        
+        .friend-circle {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}

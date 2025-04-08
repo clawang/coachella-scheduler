@@ -1,12 +1,14 @@
 import { createClientComponentClient, Session, SupabaseClient, User as SupabaseUser } from '@supabase/auth-helpers-nextjs';
-import { Act, User, RELATIONSHIP_STATUS } from '../types';
+import { Act, User, RELATIONSHIP_STATUS, Schedule } from '../types';
 import { AuthChangeEvent } from '@supabase/supabase-js';
 
 export class Supabase {
     client: SupabaseClient;
+    session: Session | null;
 
     constructor(client: SupabaseClient) {
         this.client = client;
+        this.session = null;
     }
 
     async signIn(email: string, password: string) {
@@ -69,9 +71,11 @@ export class Supabase {
     }
 
     async getSession(): Promise<Session | null> {
+        if (this.session) return this.session;
         const {
             data: { session },
         } = await this.client.auth.getSession();
+        if (session) this.session = session;
         return session;
     }
 
@@ -121,6 +125,14 @@ export class Supabase {
         const { data, error } = await this.client.from('acts_users')
             .delete()
             .match({ user_id, act_id });
+
+        return { data, error };
+    }
+
+    async editNote(user_id: string, act_id: number, note: string): Promise<{ data: any, error: any }> {
+        const { data, error } = await this.client.from('acts_users')
+            .update({ note: note })
+            .match({ user_id, act_id }).select();
 
         return { data, error };
     }
@@ -224,6 +236,9 @@ export class Supabase {
             .from('users')
             .select(`
                 id,
+                username,
+                profilePic,
+                acts_users ( act_id, note ),
                 acts ( id, name, date, startTime, endTime, stage )
             `)
             .eq('id', user_id);
@@ -264,7 +279,7 @@ export class Supabase {
         if (session?.user.id) {
             const friendsObj = await this.fetchFriends(session?.user.id);
             if (friendsObj.data) {
-                const friendIds = friendsObj.data.map((friend: {status: number, friend: User}) => friend.friend.id);
+                const friendIds = friendsObj.data.map((friend: { status: number, friend: User }) => friend.friend.id);
                 const { data, error } = await this.client
                     .from('acts_users')
                     .select(`
@@ -272,6 +287,30 @@ export class Supabase {
                         friend:user_id ( id, username, profilePic )
                     `)
                     .in('user_id', friendIds);
+
+                return { data, error };
+            }
+            return friendsObj;
+        }
+        return { error: { message: "no session id found" } };
+    }
+
+    async fetchFriendsActsForSchedule(acts: Act[]) {
+        const session = await this.getSession();
+        const schedule = acts.map(act => act.id);
+        if (session?.user.id) {
+            const friendsObj = await this.fetchFriends(session?.user.id);
+            if (friendsObj.data) {
+                const friendIds = friendsObj.data.map((friend: { status: number, friend: User }) => friend.friend.id);
+                const { data, error } = await this.client
+                    .from('acts_users')
+                    .select(`
+                        note,
+                        act:act_id ( id ),
+                        friend:user_id ( id, username, profilePic )
+                    `)
+                    .in('user_id', friendIds)
+                    .in('act_id', schedule);
 
                 return { data, error };
             }

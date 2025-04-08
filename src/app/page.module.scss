@@ -42,7 +42,6 @@
 		cursor: pointer;
 		border-radius: 8px;
 		padding: 10px 15px;
-		min-width: 72px;
 		flex-shrink: 0;
 		border: none;
 		transition: 0.3s;
@@ -58,6 +57,67 @@
 		align-items: flex-start;
 		justify-content: space-between;
 	}
+
+	input {
+		padding: 0 5px;
+		font-size: 12px;
+		width: 100%;
+		border: none;
+	}
+
+	[class~="profile-pic"] {
+		border-radius: 50%;
+		width: 25px;
+		height: 25px;
+		background: variables.$blue;
+		overflow: hidden;
+		flex-shrink: 0;
+		margin-right: 7px;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	[class~="friend-notes-wrapper"] {
+		padding: 10px 0 0;
+
+		[class~="friend-note-wrapper"] {
+			display: flex;
+			align-items: center;
+			padding: 3px 0;
+
+			p {
+				font-size: 12px;
+			}
+		}
+	}
+
+	[class~="note-wrapper"] {
+		display: flex;
+		align-items: center;
+		padding: 5px 0 0;
+
+		[class~="note-input"] {
+			width: 100%;
+			display: flex;
+			border-bottom: 2px solid black;
+			padding: 5px 0;
+		}
+
+		[class~="send-note"] {
+			background: #000;
+			border-radius: 22px;
+			color: variables.$cream;
+			min-width: 40px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
 }
 
 .scheduleItemLocation {
@@ -70,115 +130,41 @@
 	}
 }
 
-.conflictWrapper {
-	//border: 1px solid red;
-	background: variables.$pink;
-	padding: 20px;
-	margin: 10px;
-	position: relative;
-
-	[class~="conflictActsWrapper"] {
-		display: flex;
-		align-items: center;
-
-		[class~="actWrapper"] {
-			width: 200px;
-
-			&:first-of-type {
-				margin-left: 0;
-			}
-		}
-	}
-
-	button {
-		position: absolute;
-		right: 20px;
-		bottom: 30px;
-	}
-}
-
-.gap-wrapper {
-	//border: 1px solid yellow;
-	background: variables.$yellow;
-	padding: 20px;
-	margin: 10px;
-	position: relative;
-
-	[class~="gapArtistsWrapper"] {
-		display: flex;
-		flex-wrap: wrap;
-		height: 110px;
-		overflow: hidden;
-		margin-bottom: 10px;
-
-		&[class~="open"] {
-			height: auto !important;
-		}
-	}
-
-	a {
-		cursor: pointer;
-		text-decoration: underline;
-	}
-
-	[class~="actWrapper"] {
-		width: 200px;
-	}
-
-	:global(#close) {
-		position: absolute;
-		top: 20px;
-		right: 20px;
-		cursor: pointer;
-	}
-
-	&[class~="hidden"] {
-		display: none;
-	}
-}
-
-.actWrapper {
-	border: 1px solid black;
-	padding: 10px;
-	margin: 10px 5px;
-	position: relative;
-
-	[class~="actLocation"] {
-		display: flex;
-		align-items: center;
-		color: variables.$body-color;
-
-		h4 {
-			font-family: 'Mont Bold';
-			font-weight: 200;
-		}
-
-		img {
-			width: 12px;
-			height: 16px;
-			margin-right: 5px;
-		}
-	}
-
-	[class~="action"] {
-		position: absolute;
-		right: 10px;
-		bottom: 10px;
-		text-decoration: underline;
-		font-size: 12px;
-	}
-}
-
 .error {
 	color: variables.$error-red;
 	margin: 10px 0 0;
 	font-size: 14px;
 }
 
+.scheduleItemFooter {
+	min-height: 36px;
+}
+
 .friendListWrapper {
 	border-top: 1px solid #e6d8c6;
 	margin-top: 10px;
 	padding-top: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+
+	[class~="open-notes"] {
+		font-size: 12px;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		padding: 5px 0 0;
+		position: absolute;
+		top: 10px;
+		right: 0;
+
+		img {
+			width: 8px;
+			height: auto;
+			margin-left: 3px;
+		}
+	}
 }
 
 @media only screen and (max-width: 600px) {
@@ -195,6 +181,14 @@
 		[class~="schedule-item-time"] {
 			font-size: 12px;
 		}
+
+		[class~="friend-notes-wrapper"] {
+			padding: 5px 0 0;
+
+			[class~="friend-note-wrapper"] {
+				padding: 2px 0;
+			}
+		}
 	}
 
 	.scheduleItemLocation {
@@ -207,6 +201,10 @@
 		}
 	}
 
+	.scheduleItemFooter {
+		min-height: 26px;
+	}
+
 	.error {
 		font-size: 12px;
 		margin-top: 5px;
@@ -215,5 +213,9 @@
 	.friendListWrapper {
 		margin-top: 5px;
 		padding-top: 0px;
+
+		[class~="open-notes"] {
+			top: 3px;
+		}
 	}
 }
