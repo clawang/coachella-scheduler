@@ -127,9 +127,9 @@ function Friend({ friendList, data, supabase }: {
         if (status === RELATIONSHIP_STATUS.NO_RELATION) {
             string = "+ add";
         } else if (status === RELATIONSHIP_STATUS.REQUESTER) {
-            string = "friend request sent"
+            string = "requested"
         } else if (status === RELATIONSHIP_STATUS.REQUESTEE) {
-            string = "accept friend request"
+            string = "confirm request"
         } else if (status === RELATIONSHIP_STATUS.FRIENDS) {
             string = "remove"
         }

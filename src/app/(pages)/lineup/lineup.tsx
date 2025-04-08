@@ -1,11 +1,11 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { timeSortFunction } from '../../utils/parseData';
 import { Session } from '@supabase/supabase-js'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Supabase } from '../../supabase/client';
 import { Act, Schedule, stages, dayMap, User } from "../../types";
-import { convertTimetoDate, toTimeString } from '@/app/utils/timeFunctions';
+import { toTimeString } from '@/app/utils/timeFunctions';
 import { convertSupabase } from '../../utils/parseData';
 import ActFriendList from '@/app/components/friend-cluster';
 import "./style.scss";

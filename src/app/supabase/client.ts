@@ -1,5 +1,5 @@
-import { createClientComponentClient, Session, SupabaseClient, User as SupabaseUser } from '@supabase/auth-helpers-nextjs';
-import { Act, User, RELATIONSHIP_STATUS, Schedule } from '../types';
+import { Session, SupabaseClient, User as SupabaseUser } from '@supabase/auth-helpers-nextjs';
+import { Act, User, RELATIONSHIP_STATUS } from '../types';
 import { AuthChangeEvent } from '@supabase/supabase-js';
 
 export class Supabase {

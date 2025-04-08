@@ -34,7 +34,6 @@
 	}
 
 	button {
-		margin: 0 5px;
 		font-family: variables.$body-font;
 		color: variables.$body-color;
 		background: rgb(255, 219, 203);
@@ -56,6 +55,12 @@
 		display: flex;
 		align-items: flex-start;
 		justify-content: space-between;
+	}
+
+	[class~="button-wrapper"] {
+		flex-shrink: 0;
+		display: flex;
+		gap: 5px;
 	}
 
 	input {
@@ -176,6 +181,11 @@
 
 		h3 {
 			font-size: 18px;
+		}
+
+		button {
+			font-size: 12px;
+			padding: 7px 10px;
 		}
 
 		[class~="schedule-item-time"] {

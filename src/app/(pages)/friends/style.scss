@@ -54,8 +54,13 @@
         margin-right: 15px;
     }
 
-    .button a {
+    .button {
+        text-align: right;
+        // max-width: 140px;
+
+        a {
         padding: 10px 15px;
+        }
     }
 }
 
@@ -80,6 +85,24 @@
     .friends-container {
         h2 {
             margin-bottom: 5px;
+        }
+    }
+
+    .friend-wrapper {
+        img {
+            width: 40px;
+        height: 40px;
+            margin-right: 5px;
+        }
+
+        .button {
+            a {
+                font-size: 12px;
+            }
+        }
+
+        .friend-info {
+            font-size: 14px;
         }
     }
 }

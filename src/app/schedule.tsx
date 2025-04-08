@@ -126,6 +126,7 @@ function Day({ data, date, supabase, user, removeAct }: {
                 schedule.length > 0 ?
                     schedule.map((act, i) => (
                         <ScheduleItem
+                            key={act.id}
                             actData={act}
                             supabase={supabase}
                             user={user}
@@ -198,7 +199,8 @@ function ScheduleItem({ actData, supabase, user, removeAct }: {
                 <div className={styles.scheduleItemFooter}>
                     {
                         (actData.friends || note) &&
-                        <div className={styles.friendListWrapper}>
+                        <div className={styles.friendListWrapper}
+                            style={{ paddingRight: '70px' }}>
                             {actData.friends &&
                                 <ActFriendList friends={actData.friends} />
                             }
