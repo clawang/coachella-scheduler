@@ -1,9 +1,9 @@
-@import "../../variables";
+@use "../../variables";
 
 .link {
     a {
         cursor: pointer;
-        color: $blue;
+        color: variables.$blue;
     }
 }
 
@@ -13,7 +13,7 @@
     padding: 30px;
 
     h2 {
-        font-family: $body-font;
+        font-family: variables.$body-font;
     }
 }
 
@@ -39,13 +39,13 @@
 }
 
 .error {
-    color: $error-red;
+    color: variables.$error-red;
     font-size: 11px;
 }
 
 .error-banner {
-    color: $error-red;
-    border: 2px solid $error-red;
+    color: variables.$error-red;
+    border: 2px solid variables.$error-red;
     border-radius: 8px;
     padding: 10px;
     margin-top: 15px;

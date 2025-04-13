@@ -1,0 +1,41 @@
+@use "../../variables";
+
+.update-profile-form {
+    padding: 50px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+
+    .input-wrapper {
+        padding: 15px 0;
+    }
+
+    input[type="file"] {
+        border: none;
+        display: block;
+        font-size: 14px;
+    }
+
+    input[type="text"] {
+        // margin-left: 10px;
+        padding: 5px;
+        font-size: 14px;
+        width: 100%;
+    }
+}
+
+.error-banner {
+    color: variables.$error-red;
+    border: 2px solid variables.$error-red;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+.success-banner {
+    color: variables.$accent-color;
+    border: 2px solid variables.$accent-color;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 15px;
+}

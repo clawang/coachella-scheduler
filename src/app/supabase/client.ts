@@ -336,25 +336,6 @@ export class Supabase {
         return { data, error };
     }
 
-    // async fetchActs() {
-    //     const session = await this.getSession();
-    //     const { data, error } = await this.client
-    //         .from('acts')
-    //         .select(`
-    //             id,
-    //             name,
-    //             date,
-    //             startTime,
-    //             endTime,
-    //             stage,
-    //             acts_users ( users (id, username) )
-    //         `)
-    //         .eq('acts_users.user_a.user_id!user_relationships_second_id_fkey', session!.user.id)
-    //         .neq('user_id', session!.user.id);
-
-    //     return { data, error };
-    // }
-
     async fetchActs() {
         const { data, error } = await this.client
             .from('acts')
@@ -370,24 +351,46 @@ export class Supabase {
         return { data, error };
     }
 
-    async fetchFeed() {
-        const session = await this.getSession();
-        console.log(session?.user.id);
-        const { data, error } = await this.client
-            .from('users_events')
-            .select(`
-                created_at,
-                status,
-                rating,
-                review,
-                user_id ( username, first_name, profile_image ),
-                users ( username ),
-                events (name, date, image_url, slug, venues (name))
-            `)
-            .eq('users.user_id!user_relationships_second_id_fkey', session!.user.id)
-            .neq('user_id', session!.user.id)
-            .order('created_at', { ascending: false });
+    async updateUser(file: File | null, username: string | null, id: string): Promise<{ error: any }> {
+        if (!file) {
+            const { error: userUpdateError } = await this.client
+                .from('users')
+                .update({
+                    username,
+                })
+                .eq('id', id);
+            return { error: userUpdateError };
+        }
+        
+        const splitFileName = file.name.split('.');
+        const path = `${username}.${splitFileName[splitFileName.length - 1]}`;
+        console.log(path);
 
-        return { data, error };
+        const bucket = "profile-pictures";
+        const { data, error } = await this.client
+            .storage
+            .from(bucket)
+            .upload(path, file, {
+                cacheControl: '0',
+                upsert: true
+            });
+        if (data) {
+            const { data: uploadData } = await this.client
+                .storage
+                .from(bucket)
+                .getPublicUrl(path);
+            console.log(uploadData.publicUrl);
+            if (uploadData) {
+                const { error: userUpdateError } = await this.client
+                    .from('users')
+                    .update({
+                        username,
+                        profilePic: uploadData.publicUrl
+                    })
+                    .eq('id', id);
+                return { error: userUpdateError };
+            }
+        }
+        return { error };
     }
 }

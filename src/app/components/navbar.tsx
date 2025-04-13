@@ -67,9 +67,14 @@ export function NavBar() {
                                     <img src={userData.profilePic} />
                                 </div>
                                 {dropdown && <div className="dropdown-wrapper">
+                                    <Link href="/profile">
+                                        <div className="dropdown-item">
+                                            Profile
+                                        </div>
+                                    </Link>
                                     <Link href="/friends">
                                         <div className="dropdown-item">
-                                            My Friends
+                                            Friends
                                         </div>
                                     </Link>
                                     <div className="dropdown-item" onClick={signOut}>
@@ -119,9 +124,14 @@ export function NavBar() {
                                 Schedule
                             </h4>
                             <h4
+                                onClick={() => navigate("/profile")}
+                                className={pathname === "/profile" ? 'selected' : ''}>
+                                Profile
+                            </h4>
+                            <h4
                                 onClick={() => navigate("/friends")}
                                 className={pathname === "/friends" ? 'selected' : ''}>
-                                My Friends
+                                Friends
                             </h4>
                             <h4 onClick={signOut}>
                                 Log out
