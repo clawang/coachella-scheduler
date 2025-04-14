@@ -6,6 +6,7 @@ import { Supabase } from '../../supabase/client';
 import { Session } from '@supabase/supabase-js'
 import { Button } from '@/app/components/button';
 import { User, RELATIONSHIP_STATUS } from '@/app/types';
+import { Handle } from '@/app/components/friend-cluster';
 import './style.scss';
 
 export default function FriendsPage({ session }: { session: Session }) {
@@ -159,7 +160,7 @@ function Friend({ friendList, data, supabase }: {
                     :
                     <div className="profile-pic-placeholder"></div>
                 }
-                <p>{"@" + data.username}</p>
+                <p><Handle username={data.username!} /></p>
             </div>
             <Button handleClick={onButtonClick}>{getButtonString()}</Button>
         </div>

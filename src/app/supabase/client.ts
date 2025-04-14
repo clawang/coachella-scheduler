@@ -252,10 +252,11 @@ export class Supabase {
         const { data, error } = await this.client
             .from('users')
             .select(`
-                user_id,
-                profile_image,
-                acts ( id, name, date, startTime, endTime, stage ),
-                user_relationships!user_relationships_first_id_fkey ( status, users!user_relationships_second_id_fkey (username, profile_image) )
+                id,
+                username,
+                profilePic,
+                acts_users ( act_id, note ),
+                acts ( id, name, date, startTime, endTime, stage )
             `)
             .eq('username', username);
 

@@ -1,14 +1,12 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, use } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Session } from '@supabase/supabase-js'
-import styles from './page.module.scss'
-import { Act, User } from "./types";
-import { toTimeString } from './utils/timeFunctions';
-import { convertSupabase, findConflicts, timeSortFunction } from './utils/parseData';
-import { Supabase } from './supabase/client';
-import ActFriendList, { Handle } from './components/friend-cluster';
-import Link from "next/link";
+import styles from '../../../page.module.scss'
+import { Act, User } from "../../../types";
+import { toTimeString } from '../../../utils/timeFunctions';
+import { convertSupabase, timeSortFunction } from '../../../utils/parseData';
+import { Supabase } from '../../../supabase/client';
+import ActFriendList, { Handle } from '../../../components/friend-cluster';
 
 const dayMap: { [key: number]: any } = {
     418: {
@@ -25,20 +23,23 @@ const dayMap: { [key: number]: any } = {
     }
 }
 
-export default function Schedule({ session }: { session: Session | null }) {
+export default function Page({ params }: { params: Promise<{ username: string }> }) {
     const supabase = new Supabase(createClientComponentClient());
     const [acts, setActs] = useState<Act[] | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const { username } = use(params);
 
     useEffect(() => {
-        if (session?.user.id && !acts) {
-            fetchProfile(session.user.id);
+        if (username) {
+            fetchProfileFromUsername();
         }
     }, []);
 
-    const fetchProfile = async (user_id: string) => {
-        const { data, error } = await supabase.fetchProfile(user_id);
-        if (data?.[0].acts) {
+    const fetchProfileFromUsername = async () => {
+        const { data, error } = await supabase.fetchProfileFromUsername(username);
+        if (data?.[0]?.acts) {
             let convertedActs = convertSupabase(data[0].acts, data[0].acts_users);
             convertedActs.sort(timeSortFunction);
             const friendData = await supabase.fetchFriendsActsForSchedule(convertedActs);
@@ -66,57 +67,65 @@ export default function Schedule({ session }: { session: Session | null }) {
                 username: data[0].username,
                 profilePic: data[0].profilePic
             });
-        }
-    }
-
-    const removeAct = (act_id: number) => {
-        if (acts) {
-            const temp = [...acts];
-            setActs(temp.filter(act => act.id !== act_id));
+            setLoading(false);
+        } else {
+            setError(true);
+            setLoading(false);
         }
     }
 
     return (
         <div className={styles.scheduleWrapper}>
-            <h2>Your Schedule</h2>
-            {acts &&
+            {!loading &&
                 <>
-                    {[418, 419, 420].map((day, index) => (
-                        <Day
-                            key={`${index}-day`}
-                            date={day}
-                            data={acts}
-                            supabase={supabase}
-                            user={user!}
-                            removeAct={removeAct}
-                        />
-                    ))}
+                    {error ?
+                        <p className={styles.errorMessage}>That user doesn't exist.</p>
+                        :
+                        <>
+                            <div className={styles.scheduleHeaderWrapper}>
+                                <div className="profile-picture">
+                                    {user?.profilePic &&
+                                        <img src={user?.profilePic} />
+                                    }
+                                </div>
+                                <h2>{`@${username}`}</h2>
+                            </div>
+                            {acts ?
+                                <>
+                                    {[418, 419, 420].map((day, index) => (
+                                        <Day
+                                            key={`${index}-day`}
+                                            date={day}
+                                            data={acts}
+                                            supabase={supabase}
+                                            user={user!}
+                                        />
+                                    ))}
+                                </>
+                                :
+                                <p>This user has no acts yet.</p>
+                            }
+                        </>
+                    }
                 </>
             }
         </div>
     );
 }
 
-function Day({ data, date, supabase, user, removeAct }: {
+function Day({ data, date, supabase, user }: {
     data: Array<Act>;
     date: number,
     supabase: Supabase,
     user: User,
-    removeAct: (act_id: number) => void,
 }) {
 
     const [schedule, setSchedule] = useState<Act[]>([]);
-    const [conflicts, setConflicts] = useState({});
-    const [gaps, setGaps] = useState({});
 
     useEffect(() => {
         const tempSched = data.filter(item => item.date === dayMap[date].date);
         if (tempSched.length > 0) {
-            let tempConflicts = findConflicts(tempSched);
-            // let tempGaps = findGaps(tempSched);
             setSchedule(tempSched);
-            // setConflicts(tempConflicts);
-            // setGaps(tempGaps);
         }
     }, [data]);
 
@@ -131,7 +140,6 @@ function Day({ data, date, supabase, user, removeAct }: {
                             actData={act}
                             supabase={supabase}
                             user={user}
-                            removeAct={removeAct}
                         />
                     ))
                     :
@@ -141,35 +149,35 @@ function Day({ data, date, supabase, user, removeAct }: {
     );
 }
 
-function ScheduleItem({ actData, supabase, user, removeAct }: {
+function ScheduleItem({ actData, supabase, user }: {
     actData: Act,
     supabase: Supabase,
     user: User,
-    removeAct: (act_id: number) => void,
 }) {
+    const [friends, setFriends] = useState(actData?.friends?.filter(friend => friend.username !== user.username) ?? []);
     const [note, setNote] = useState(actData.note ?? '');
     const [notesOpen, setNotesOpen] = useState(false);
     const [noteInputOpen, setInputOpen] = useState(false);
     const [noteInput, setNoteInput] = useState(actData.note ?? '');
-    const [friendNotes, setFriendNotes] = useState(actData.friends?.filter(friend => friend.note));
+    const [friendNotes, setFriendNotes] = useState(actData.friends?.filter(friend => friend.note && friend.username && friend.username !== user.username));
 
-    const handleRemoveClick = async () => {
-        if (!user.id) return;
-        let { data, error } = await supabase.unjoinUserAct(user.id, actData.id);
-        if (!error) {
-            removeAct(actData.id);
-        }
-        console.log(error);
-    }
+    // const handleRemoveClick = async () => {
+    //     if (!user.id) return;
+    //     let { data, error } = await supabase.unjoinUserAct(user.id, actData.id);
+    //     if (!error) {
+    //         removeAct(actData.id);
+    //     }
+    //     console.log(error);
+    // }
 
-    const editNote = async () => {
-        if (!user.id) return;
-        let { data, error } = await supabase.editNote(user.id, actData.id, noteInput);
-        if (!error) {
-            setInputOpen(false);
-            setNote(noteInput);
-        }
-    }
+    // const editNote = async () => {
+    //     if (!user.id) return;
+    //     let { data, error } = await supabase.editNote(user.id, actData.id, noteInput);
+    //     if (!error) {
+    //         setInputOpen(false);
+    //         setNote(noteInput);
+    //     }
+    // }
 
     return (
         <div className={styles.scheduleItemWrapper}
@@ -180,30 +188,30 @@ function ScheduleItem({ actData, supabase, user, removeAct }: {
                     <p className="schedule-item-time">{toTimeString(actData.startTime)} - {toTimeString(actData.endTime)}</p>
                     <h3>{actData.name}</h3>
                     <div className={styles.scheduleItemLocation}>
-                        <img src="./pin.png" />
+                        <img src="/pin.png" />
                         <h4>{actData.stage}</h4>
                     </div>
                 </div>
-                <div className="button-wrapper">
+                {/* <div className="button-wrapper">
                     <button onClick={() => setInputOpen(!noteInputOpen)}>
                         {note ? "Edit Note" : "+ Note"}
                     </button>
                     <button onClick={handleRemoveClick}>
                         X Remove
                     </button>
-                </div>
+                </div> */}
             </div>
             {
                 actData.conflict && <p className={styles.error}>This act conflicts with another you want to see.</p>
             }
-            {(actData.friends || note || noteInputOpen) &&
+            {(friends.length > 0 || note || noteInputOpen) &&
                 <div className={styles.scheduleItemFooter}>
                     {
-                        (actData.friends || note) &&
+                        (friends.length > 0 || note) &&
                         <div className={styles.friendListWrapper}
                             style={{ paddingRight: '70px' }}>
-                            {actData.friends &&
-                                <ActFriendList friends={actData.friends} />
+                            {friends.length > 0 &&
+                                <ActFriendList friends={friends} />
                             }
                             {((friendNotes && friendNotes.length > 0) || note) &&
                                 <div className="open-notes" onClick={() => setNotesOpen(!notesOpen)}>
@@ -228,20 +236,6 @@ function ScheduleItem({ actData, supabase, user, removeAct }: {
                                     <p><span className="username">{`@${user.username}`}</span>{` ${note}`}</p>
                                 </div>
                             }
-                        </div>
-                    }
-                    {
-                        noteInputOpen &&
-                        <div className="note-wrapper">
-                            <div className="profile-pic">
-                                {
-                                    user.profilePic && <img src={user.profilePic} />
-                                }
-                            </div>
-                            <div className="note-input">
-                                <input type="text" value={noteInput} onChange={e => setNoteInput(e.target.value)} />
-                                <div className="send-note" onClick={editNote}>↑</div>
-                            </div>
                         </div>
                     }
                 </div>

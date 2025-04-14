@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { User } from '../types';
+import Link from "next/link";
 import useWindowDimensions from '../utils/useWindowDimensions';
 import './style.scss';
 
@@ -42,7 +43,7 @@ function FriendCluster({ friends }: { friends: User[] }) {
                 <div className="friend-list">
                     {
                         friends.map(friend => (
-                            <p className="friend-name">@{friend.username}</p>
+                            <p className="friend-name"><Handle username={friend.username!} /></p>
                         ))
                     }
                 </div>
@@ -57,15 +58,23 @@ export default function ActFriendList({ friends }: { friends: User[] }) {
             <FriendCluster friends={friends} />
             <p className="act-friend-text">{friends.length > 1 ?
                 <>
-                    <span className="username">{`@${friends[0].username}`}</span>
+                    <Handle username={friends[0].username!} />
                     {` and ${friends.length - 1} other friends are going`}
                 </>
                 :
                 <>
-                    <span className="username">{`@${friends[0].username}`}</span>
+                    <Handle username={friends[0].username!} />
                     {` is going`}
                 </>
             }</p>
         </div>
     )
+}
+
+export function Handle({ username }: { username: string }) {
+    return (
+        <Link href={`/user/${username}`}>
+            <span className="username">{`@${username}`}</span>
+        </Link>
+    );
 }
